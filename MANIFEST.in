@@ -1,0 +1,3 @@
+graft adverse_drug_reactions
+global-exclude *.py[cod] __pycache__ *.so *.ipynb
+recursive-exclude  adverse_drug_reactions/jupy *
