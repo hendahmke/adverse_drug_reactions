@@ -10,3 +10,5 @@ yapf
 python-gitlab
 twine
 python-dotenv
+flask
+Flask-SQLAlchemy
