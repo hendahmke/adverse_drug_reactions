@@ -12,3 +12,4 @@ twine
 python-dotenv
 flask
 Flask-SQLAlchemy
+nltk
