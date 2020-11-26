@@ -213,6 +213,10 @@ compare_data = pd.DataFrame(predictions, columns = ["Side_Effect", "No_Side_Effe
 
 length = len(predictions)
 
+"""
+Output Engineering
+"""
+
 compare_data["Manually_Labelled"] = manual["sideEffect"] # Brings a column from the other DataFrame
 
 compare_data["Prediction"] = compare_data.Side_Effect.apply(one_or_zero) # Applies the binary output
@@ -228,7 +232,9 @@ compare_data.drop(["Side_Effect", "No_Side_Effect"], axis = 1)
 compare_data.to_csv('compare_data.csv')
 
 
-
+"""
+Putting the created csv into html.
+"""
 
 csv_data = 'compare_data.csv'
 
