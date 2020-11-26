@@ -5,65 +5,8 @@
     <h2>Please select the drug you're looking for.</h2>
     <p>This will be either a pull down or type in box for possible drugs</p>
   </div>
-    <table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>drug</th>
-      <th>condition</th>
-      <th>headache</th>
-      <th>nausea</th>
-      <th>dizzy</th>
-      <th>death</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Tylenol</td>
-      <td>pain</td>
-      <td>2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Cialis</td>
-      <td>ed</td>
-      <td>4</td>
-      <td>1</td>
-      <td>2</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Ibuprofen</td>
-      <td>pain</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Benadril</td>
-      <td>allergy</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Claritin</td>
-      <td>allergy</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>20</td>
-    </tr>
-  </tbody>
-</table>
+  {% print(html_block) | safe %}
+  <!-- {% print(sql) | safe %} -->
+
 {% endblock %}
 
