@@ -155,6 +155,12 @@ manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
 manual["Lemmatized_review_list"] = manual.Lemmatized_review.apply(remove_stopwords)
 manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
 
+# manaul['filered_column_by_se'] = 'juan.jack'
+# manual['seperating by reviews_length'] = 'hendrike'
+# manual['seperating by reviews_score'] = 'peter'
+
+
+
 manual["words_count"] = manual.Lemmatized_review_list.apply(count_words)
 
 X = manual["Lemmatized_review_str"]
