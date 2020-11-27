@@ -1,4 +1,3 @@
-
 """
 Imports
 """
@@ -24,18 +23,9 @@ from nltk.sentiment.util import mark_negation
 
 import nltk
 
-from flask import request, Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
-import csv
-
-
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
-
-
-app = Flask(__name__)
-
 
 """
 Functions
@@ -133,7 +123,7 @@ Data
 """
 
 # manual = pd.read_csv('manually_labelled_data.csv')
-manual = pd.read_csv("raw_data/manually_labelled_data.csv")
+manual = pd.read_csv("/content/drive/MyDrive/Data/manually_labelled_data.csv")
 
 manual = manual.drop(["uniqueID", "drugName", "condition", "date", "rating", "usefulCount"], axis = 1)
 
@@ -161,13 +151,13 @@ X = manual["Lemmatized_review_str"]
 
 y = manual["sideEffect"]
 
-# # How many drugs the DF mentions
-# drugs = pd.DataFrame(manual["drugName"].value_counts()).head(14).T
-# drugs.to_csv('drug_mentions.csv')
+# How many drugs the DF mentions
+drugs = pd.DataFrame(manual["drugName"].value_counts()).head(14).T
+drugs.to_csv('data.csv')
 
-# # How many conditions the DF mentions
-# conditions = pd.DataFrame(manual["condition"].value_counts()).head(14).T
-# conditions.to_csv('condition_mentions.csv')
+# How many conditions the DF mentions
+conditions = pd.DataFrame(manual["condition"].value_counts()).head(14).T
+conditions.to_csv('data.csv')
 
 manual = manual.drop(["clean_review", "clean_review_lst", "NonStopwords_review_lst", "NonStopwords_review_str"], axis = 1)
 
@@ -200,9 +190,9 @@ vocab = vectorizer.get_feature_names()
 
 # iterates over the reviews and predict
 
-predictions = []
-for review in manual["Lemmatized_review"]:
-    vectorized = vectorizer.transform([review])
+for review in manual["Lemmatized_review_list"]:
+    predictions = []
+    vectorized = vectorizer.transform(review)
     lda_vectors = predictions.append(lda_model.transform(vectorized))
 
 predictions = np.concatenate(predictions, axis=0)
@@ -210,12 +200,6 @@ predictions = np.concatenate(predictions, axis=0)
 # comparison DataFrame
 
 compare_data = pd.DataFrame(predictions, columns = ["Side_Effect", "No_Side_Effect"])
-
-length = len(predictions)
-
-"""
-Output Engineering
-"""
 
 compare_data["Manually_Labelled"] = manual["sideEffect"] # Brings a column from the other DataFrame
 
@@ -229,28 +213,4 @@ compare_data.drop(["Side_Effect", "No_Side_Effect"], axis = 1)
 
 # exports the data
 
-compare_data.to_csv('compare_data.csv')
-
-
-"""
-Putting the created csv into html.
-"""
-
-csv_data = 'compare_data.csv'
-
-
-
-@app.route('/')
-@app.route('/home', methods = ['GET', 'POST'])
-def home():
-
-    html_block = pd.read_csv(csv_data).to_html()
-    return render_template('home.html', html_block=html_block, length = length)
-
-@app.route('/data')
-def data():
-    return render_template('data.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
+compare_data.to_csv('data.csv')
