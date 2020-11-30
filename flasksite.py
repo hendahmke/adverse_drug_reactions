@@ -26,7 +26,7 @@ import nltk
 
 from flask import request, Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from forms import DrugQuery
+# from forms import DrugQuery
 import csv
 
 
@@ -120,6 +120,11 @@ def one_or_zero(x):
         x = 0
     return x
 
+def remove_our_stopwords(x):
+    tokenized = word_tokenize(x)
+    without_stopwords = [word for word in tokenized if not word in OUR_STOPWORDS]
+    return without_stopwords
+
 #===============================================================
 
 def print_topics(model, vectorizer):
@@ -132,111 +137,178 @@ def print_topics(model, vectorizer):
 """
 Data
 """
+side_effects = pd.read_csv('raw_data/frequent_adr.csv')
+
+stop_words = set(stopwords.words('english'))
+
+
+side_effects["Side_Effect"] = pd.DataFrame(side_effects)
+
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(punctuation)
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(remove_numbers)
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(to_list)
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(lemmatize_review)
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(to_string)
+side_effects["Side_Effect"] = side_effects.Side_Effect.apply(remove_stopwords)
+side_effects = side_effects["Side_Effect"].tolist()
+
+SE_LIST = []
+
+for sublist in side_effects:
+    for item in sublist:
+        if item not in SE_LIST:
+            SE_LIST.append(item)
+
+OUR_STOPWORDS = set(stopwords.words('english'))
+
+for effect in SE_LIST:
+    OUR_STOPWORDS.add(effect)
+
+for word in stop_words:
+    OUR_STOPWORDS.remove(word)
+OUR_STOPWORDS = ['abdominal', 'constipation', 'diarrhea', 'skin', 'rash', 'vertigo', 'dizziness', 'drowsiness',
+              'headache', 'mood disorders', 'insomnia', 'mood swings', "no side effect", "good response", "improvement"]
+def side_effects_lst(x):
+    lista = []
+    for i in x:
+        y = remove_our_stopwords(i)
+        if i not in y:
+            lista.append(i)
+    return lista
+data = pd.read_csv('raw_data/drugsComTrain_raw.csv')
+data = data[data['rating'] < 5]
+data["clean_review"] = data["review"].apply(punctuation)
+data['clean_review'] = data.clean_review.apply(remove_numbers)
+data['clean_review_lst'] = data.clean_review.apply(to_list)
+
+data["NonStopwords_review_lst"] = data.clean_review.apply(remove_stopwords)
+data["NonStopwords_review_str"] = data.NonStopwords_review_lst.apply(to_string)
+
+data["NonStopwords_review_lst_MN"] = data.clean_review.apply(m_negation)
+data["NonStopwords_review_str_MN"] = data.NonStopwords_review_lst_MN.apply(to_string)
+
+data["Lemmatized_review_lst"] = data.NonStopwords_review_lst_MN.apply(lemmatize_review)
+data["Lemmatized_review_str"] = data.Lemmatized_review_lst.apply(to_string)
+
+data["Lemmatized_review_list"] = data.NonStopwords_review_lst.apply(lemmatize_review)
+data["Lemmatized_review"] = data.Lemmatized_review_list.apply(to_string)
+data["Lemmatized_review_list"] = data.Lemmatized_review.apply(remove_stopwords)
+data["Lemmatized_review"] = data.Lemmatized_review_list.apply(to_string)
+# data["our"] = data.Lemmatized_review.apply(remove_our_stopwords)
+# data["our_str"] = data.our.apply(to_string)
+
+data["words_count"] = data.Lemmatized_review_list.apply(count_words)
+
+data = data.drop(["clean_review", "clean_review_lst", "NonStopwords_review_lst", "date", "NonStopwords_review_str"], axis = 1)
+
+data["Side_Effects_mention"] = data.Lemmatized_review_list.apply(side_effects_lst)
+countSE_drug_df = data[['drugName', 'Side_Effects_mention']]
+countSE_drug_df.groupby(by='drugName')['Side_Effects_mention'].value_counts().unstack()
 
 # manual = pd.read_csv('manually_labelled_data.csv')
-manual = pd.read_csv("raw_data/manually_labelled_data.csv")
+# manual = pd.read_csv("raw_data/manually_labelled_data.csv")
 
-manual = manual.drop(["uniqueID", "drugName", "condition", "date", "rating", "usefulCount"], axis = 1)
+# manual = manual.drop(["uniqueID", "drugName", "condition", "date", "rating", "usefulCount"], axis = 1)
 
-manual["clean_review"] = manual["review"].apply(punctuation)
-manual['clean_review'] = manual.clean_review.apply(remove_numbers)
-manual['clean_review_lst'] = manual.clean_review.apply(to_list)
+# manual["clean_review"] = manual["review"].apply(punctuation)
+# manual['clean_review'] = manual.clean_review.apply(remove_numbers)
+# manual['clean_review_lst'] = manual.clean_review.apply(to_list)
 
-manual["NonStopwords_review_lst"] = manual.clean_review.apply(remove_stopwords)
-manual["NonStopwords_review_str"] = manual.NonStopwords_review_lst.apply(to_string)
+# manual["NonStopwords_review_lst"] = manual.clean_review.apply(remove_stopwords)
+# manual["NonStopwords_review_str"] = manual.NonStopwords_review_lst.apply(to_string)
 
-manual["NonStopwords_review_lst_MN"] = manual.clean_review.apply(m_negation)
-manual["NonStopwords_review_str_MN"] = manual.NonStopwords_review_lst_MN.apply(to_string)
+# manual["NonStopwords_review_lst_MN"] = manual.clean_review.apply(m_negation)
+# manual["NonStopwords_review_str_MN"] = manual.NonStopwords_review_lst_MN.apply(to_string)
 
-manual["Lemmatized_review_lst"] = manual.NonStopwords_review_lst_MN.apply(lemmatize_review)
-manual["Lemmatized_review_str"] = manual.Lemmatized_review_lst.apply(to_string)
+# manual["Lemmatized_review_lst"] = manual.NonStopwords_review_lst_MN.apply(lemmatize_review)
+# manual["Lemmatized_review_str"] = manual.Lemmatized_review_lst.apply(to_string)
 
-manual["Lemmatized_review_list"] = manual.NonStopwords_review_lst.apply(lemmatize_review)
-manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
-manual["Lemmatized_review_list"] = manual.Lemmatized_review.apply(remove_stopwords)
-manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
+# manual["Lemmatized_review_list"] = manual.NonStopwords_review_lst.apply(lemmatize_review)
+# manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
+# manual["Lemmatized_review_list"] = manual.Lemmatized_review.apply(remove_stopwords)
+# manual["Lemmatized_review"] = manual.Lemmatized_review_list.apply(to_string)
 
-# manaul['filered_column_by_se'] = 'juan.jack'
-# manual['seperating by reviews_length'] = 'hendrike'
-# manual['seperating by reviews_score'] = 'peter'
+# # manaul['filered_column_by_se'] = 'juan.jack'
+# # manual['seperating by reviews_length'] = 'hendrike'
+# # manual['seperating by reviews_score'] = 'peter'
 
 
 
-manual["words_count"] = manual.Lemmatized_review_list.apply(count_words)
+# manual["words_count"] = manual.Lemmatized_review_list.apply(count_words)
 
-X = manual["Lemmatized_review_str"]
+# X = manual["Lemmatized_review_str"]
 
-y = manual["sideEffect"]
+# y = manual["sideEffect"]
 
-# # How many drugs the DF mentions
-# drugs = pd.DataFrame(manual["drugName"].value_counts()).head(14).T
-# drugs.to_csv('drug_mentions.csv')
+# # # How many drugs the DF mentions
+# # drugs = pd.DataFrame(manual["drugName"].value_counts()).head(14).T
+# # drugs.to_csv('drug_mentions.csv')
 
-# # How many conditions the DF mentions
-# conditions = pd.DataFrame(manual["condition"].value_counts()).head(14).T
-# conditions.to_csv('condition_mentions.csv')
+# # # How many conditions the DF mentions
+# # conditions = pd.DataFrame(manual["condition"].value_counts()).head(14).T
+# # conditions.to_csv('condition_mentions.csv')
 
-manual = manual.drop(["clean_review", "clean_review_lst", "NonStopwords_review_lst", "NonStopwords_review_str"], axis = 1)
+# manual = manual.drop(["clean_review", "clean_review_lst", "NonStopwords_review_lst", "NonStopwords_review_str"], axis = 1)
 
-"""
-TF-IDF features | Latent Dirichlet allocation
-"""
+# """
+# TF-IDF features | Latent Dirichlet allocation
+# """
 
-vectorizer = TfidfVectorizer(min_df = 5,
-                             max_df = 1000,
-                             max_features = None,
-                             vocabulary = None,
-                             ngram_range = (1, 3)).fit(manual["Lemmatized_review"]) #
+# vectorizer = TfidfVectorizer(min_df = 5,
+#                              max_df = 1000,
+#                              max_features = None,
+#                              vocabulary = None,
+#                              ngram_range = (1, 3)).fit(manual["Lemmatized_review"]) #
 
-# MINDF Ignore terms that have a document frequency strictly higher than the given threshold
-# MAXDF When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold
+# # MINDF Ignore terms that have a document frequency strictly higher than the given threshold
+# # MAXDF When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold
 
-data_vectorized = vectorizer.transform(manual["Lemmatized_review"]) #
+# data_vectorized = vectorizer.transform(manual["Lemmatized_review"]) #
 
-lda_model = LatentDirichletAllocation(n_components = 2,
-                                      learning_method = 'online',
-                                      random_state = 29,
-                                      #batch_size = 128,
-                                      learning_decay = 0.5,
-                                      learning_offset = 5,
-                                      #evaluate_every = -1,
-                                      verbose = 0,
-                                      max_iter = 50).fit(data_vectorized)
+# lda_model = LatentDirichletAllocation(n_components = 2,
+#                                       learning_method = 'online',
+#                                       random_state = 29,
+#                                       #batch_size = 128,
+#                                       learning_decay = 0.5,
+#                                       learning_offset = 5,
+#                                       #evaluate_every = -1,
+#                                       verbose = 0,
+#                                       max_iter = 50).fit(data_vectorized)
 
-vocab = vectorizer.get_feature_names()
+# vocab = vectorizer.get_feature_names()
 
-# iterates over the reviews and predict
+# # iterates over the reviews and predict
 
-predictions = []
-for review in manual["Lemmatized_review"]:
-    vectorized = vectorizer.transform([review])
-    lda_vectors = predictions.append(lda_model.transform(vectorized))
+# predictions = []
+# for review in manual["Lemmatized_review"]:
+#     vectorized = vectorizer.transform([review])
+#     lda_vectors = predictions.append(lda_model.transform(vectorized))
 
-predictions = np.concatenate(predictions, axis=0)
+# predictions = np.concatenate(predictions, axis=0)
 
-# comparison DataFrame
+# # comparison DataFrame
 
-compare_data = pd.DataFrame(predictions, columns = ["Side_Effect", "No_Side_Effect"])
+# compare_data = pd.DataFrame(predictions, columns = ["Side_Effect", "No_Side_Effect"])
 
-length = len(predictions)
+# length = len(predictions)
 
-"""
-Output Engineering
-"""
+# """
+# Output Engineering
+# """
 
-compare_data["Manually_Labelled"] = manual["sideEffect"] # Brings a column from the other DataFrame
+# compare_data["Manually_Labelled"] = manual["sideEffect"] # Brings a column from the other DataFrame
 
-compare_data["Prediction"] = compare_data.Side_Effect.apply(one_or_zero) # Applies the binary output
-compare_data["No_Side_Effect_%"] = compare_data.No_Side_Effect.apply(round_two) # Applies a format
-compare_data["Side_Effect_%"] = compare_data.Side_Effect.apply(round_two) # Applies a format
+# compare_data["Prediction"] = compare_data.Side_Effect.apply(one_or_zero) # Applies the binary output
+# compare_data["No_Side_Effect_%"] = compare_data.No_Side_Effect.apply(round_two) # Applies a format
+# compare_data["Side_Effect_%"] = compare_data.Side_Effect.apply(round_two) # Applies a format
 
-compare_data["bool"] = np.where(compare_data["Manually_Labelled"] == compare_data["Prediction"], True, False) # Compares betwen the precdiction and the label
+# compare_data["bool"] = np.where(compare_data["Manually_Labelled"] == compare_data["Prediction"], True, False) # Compares betwen the precdiction and the label
 
-compare_data.drop(["Side_Effect", "No_Side_Effect"], axis = 1)
+# compare_data.drop(["Side_Effect", "No_Side_Effect"], axis = 1)
 
-# exports the data
+# # exports the data
 
-compare_data.to_csv('compare_data.csv')
+# compare_data.to_csv('compare_data.csv')
 
 
 """
@@ -268,8 +340,8 @@ df = df.T.to_dict().values()
 def home():
     # form = DrugQuery()
     # to_display = drugs.find_one({'drug' : f'{form.drugname}'})
-    # html_block = df.to_html()
-    return render_template('home.html', html_block=df)
+    html_block = countSE_drug_df.groupby(by='drugName')['Side_Effects_mention'].value_counts().unstack().to_html()
+    return render_template('home.html', html_block=html_block)
 
 @app.route('/data')
 def data():

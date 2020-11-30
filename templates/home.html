@@ -6,8 +6,23 @@
     <h2>Please select the drug you're looking for.</h2>
     <p>This will be either a pull down or type in box for possible drugs</p>
   </div>
-
+  <div class = "content-section">
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+      <fieldset class = "form-group">
+        <legend class = "border-bottom mb-4">Type in drug to search</legend>
+        <div class="form-group">
+            {{ form.drugname.label(class="form-control-label") }}
+            {{ form.drugname(class="form-control form-control-lg") }}
+        </div>
+      </fieldset>
+      <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+      </div>
+    </form>
+  </div>
   {% print(html_block) | safe %}
-
+  <br>
+  <img src={{ image }} alt="Chart" height="500" width="500">
 {% endblock %}
 
