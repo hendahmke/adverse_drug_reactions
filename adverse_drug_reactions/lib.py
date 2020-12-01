@@ -58,11 +58,11 @@ def home():
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
     if to_display == drugs.find_one({'drugName' : 'Abatacept'}):
-        fig.savefig(f'/static/images/Abatacept.png')
-        image = '/static/images/Abatacept.png'
+        fig.savefig('adverse_drug_reactions/static/images/Abatacept.png')
+        image = 'adverse_drug_reactions/static/images/Abatacept.png'
     else:
-        fig.savefig(f'/static/images/{form.drugname.data.replace(" ", "")}.png')
-        image = f'/static/images/{form.drugname.data.replace(" ", "")}.png'
+        fig.savefig(f'adverse_drug_reactions/static/images/{form.drugname.data.replace(" ", "")}.png')
+        image = f'adverse_drug_reactions/static/images/{form.drugname.data.replace(" ", "")}.png'
     #Create table to go above image
     panda = panda.to_html(index = False)
 
