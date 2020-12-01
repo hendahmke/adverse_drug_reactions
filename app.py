@@ -4,21 +4,15 @@ from forms import DrugQueryForm
 import pandas as pd
 import csv
 import matplotlib.pyplot as plt
+import pickle
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'f9f090e11ddd2bae'
-import pymongo
-from pymongo import MongoClient
-client = MongoClient()
 
 
 
-db = client['adverse_effects']
 
-df = pd.read_csv('./categorical_se.csv')
-drugs = db['drugs']
-db.drugs.drop()
-drugs.insert_many(df.T.to_dict().values())
+master_dict = pickle.load(open("./master_dict.pkl", 'rb'))
 
 #This is an empty commit
 
@@ -28,9 +22,10 @@ drugs.insert_many(df.T.to_dict().values())
 def home():
     #Query the database
     form = DrugQueryForm()
-    to_display = drugs.find_one({'drugName' : f'{form.drugname.data}'})
-    if to_display == None: #Default if no entry yet
-        to_display = drugs.find_one({'drugName' : 'Abatacept'})
+    print(type(master_dict))
+    to_display = master_dict[f'{form.drugname.data}']
+    if form.drugname.data == None: #Default if no entry yet
+        to_display = master_dict['Abatacept']
 
     #Remove zero value counts
     panda = pd.DataFrame(to_display, index = ['drug'])
@@ -52,7 +47,7 @@ def home():
     ax.set_xlabel('Total Number')
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
-    if to_display == drugs.find_one({'drugName' : 'Abatacept'}):
+    if to_display == master_dict['Abatacept']:
         fig.savefig('./static/images/Abatacept.png')
         image = './static/images/Abatacept.png'
     else:
@@ -73,3 +68,14 @@ def data():
 
 if __name__ == '__main__':
     app.run()
+
+
+#get rid of mongo, search a dictionary, run on cloud service, pickled python object
+
+#find_many, loop through database
+
+# -list of drugs
+# -find_many with list
+# -retrieve all of the dictionaries
+# -save all of the files in a pickled (check size < 20 mb)
+# -read from pickled file in github

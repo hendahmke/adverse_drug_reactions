@@ -17,3 +17,4 @@ WTForms
 nltk
 matplotlib
 gunicorn
+pickle
