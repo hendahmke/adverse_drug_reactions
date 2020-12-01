@@ -20,7 +20,7 @@ client = MongoClient()
 
 db = client['adverse_effects']
 
-df = pd.read_csv('./data/categorical_se.csv')
+df = pd.read_csv('/data/categorical_se.csv')
 drugs = db['drugs']
 db.drugs.drop()
 drugs.insert_many(df.T.to_dict().values())
@@ -58,11 +58,11 @@ def home():
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
     if to_display == drugs.find_one({'drugName' : 'Abatacept'}):
-        fig.savefig(f'./static/images/Abatacept.png')
-        image = './static/images/Abatacept.png'
+        fig.savefig(f'/static/images/Abatacept.png')
+        image = '/static/images/Abatacept.png'
     else:
-        fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
-        image = f'./static/images/{form.drugname.data.replace(" ", "")}.png'
+        fig.savefig(f'/static/images/{form.drugname.data.replace(" ", "")}.png')
+        image = f'/static/images/{form.drugname.data.replace(" ", "")}.png'
     #Create table to go above image
     panda = panda.to_html(index = False)
 
