@@ -20,7 +20,7 @@ drugs = db['drugs']
 db.drugs.drop()
 drugs.insert_many(df.T.to_dict().values())
 
-
+#This is an empty commit
 
 
 @app.route('/', methods = ['GET', 'POST'])
