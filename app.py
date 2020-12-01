@@ -22,10 +22,10 @@ master_dict = pickle.load(open("./master_dict.pkl", 'rb'))
 def home():
     #Query the database
     form = DrugQueryForm()
-    print(type(master_dict))
-    to_display = master_dict[f'{form.drugname.data}']
     if form.drugname.data == None: #Default if no entry yet
         to_display = master_dict['Abatacept']
+    else:
+        to_display = master_dict[f'{form.drugname.data}']
 
     #Remove zero value counts
     panda = pd.DataFrame(to_display, index = ['drug'])
