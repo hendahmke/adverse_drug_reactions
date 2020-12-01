@@ -20,7 +20,7 @@ client = MongoClient()
 
 db = client['adverse_effects']
 
-df = pd.read_csv('/data/categorical_se.csv')
+df = pd.read_csv('adverse_drug_reactions/data/categorical_se.csv')
 drugs = db['drugs']
 db.drugs.drop()
 drugs.insert_many(df.T.to_dict().values())
