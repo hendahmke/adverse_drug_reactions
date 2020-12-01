@@ -1,5 +1,4 @@
-from flask import request, Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from flask import request, Flask, render_template, url_for
 from forms import DrugQueryForm
 import pandas as pd
 import csv
@@ -11,19 +10,11 @@ import pymongo
 from pymongo import MongoClient
 client = MongoClient()
 
-# data = {'drug' : ['Tylenol', 'Cialis', 'Ibuprofen', 'Benadril', 'Claritin'],
-#        'headache' : [2, 4, 0, 1, 0],
-#        'nausea' : [0, 1, 1, 1, 0],
-#        'dizzy' : [0, 2, 1, 1, 0],
-#        'death' : [1, 0, 1, 2, 20]}
 
-
-# df = pd.DataFrame(data, columns = data.keys())
 
 db = client['adverse_effects']
 
-df = pd.read_csv('./raw_data/SE_count.csv')
-
+df = pd.read_csv('./raw_data/categorical_se.csv')
 drugs = db['drugs']
 db.drugs.drop()
 drugs.insert_many(df.T.to_dict().values())
@@ -37,8 +28,8 @@ def home():
     #Query the database
     form = DrugQueryForm()
     to_display = drugs.find_one({'drugName' : f'{form.drugname.data}'})
-
-
+    if to_display == None: #Default if no entry yet
+        to_display = drugs.find_one({'drugName' : 'Abatacept'})
 
     #Remove zero value counts
     panda = pd.DataFrame(to_display, index = ['drug'])
@@ -60,16 +51,20 @@ def home():
     ax.set_xlabel('Total Number')
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
-    fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
-
+    if to_display == drugs.find_one({'drugName' : 'Abatacept'}):
+        fig.savefig(f'./static/images/Abatacept.png')
+        image = './static/images/Abatacept.png'
+    else:
+        fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
+        image = f'./static/images/{form.drugname.data.replace(" ", "")}.png'
     #Create table to go above image
-    panda = panda.to_html()
+    panda = panda.to_html(index = False)
 
 
 
-    return render_template('home.html', html_block=panda, form=form, image=f'./static/images/{form.drugname.data.replace(" ", "")}.png')
+    return render_template('home.html', html_block=panda, form=form, image=image)
 
-@app.route('/data')
+@app.route('/about')
 def data():
     return render_template('data.html')
 
