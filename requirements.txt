@@ -11,6 +11,8 @@ python-gitlab
 twine
 python-dotenv
 flask
+Flask-WTF
 pymongo
 WTForms
 nltk
+matplotlib
