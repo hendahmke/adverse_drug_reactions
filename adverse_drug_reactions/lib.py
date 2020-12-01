@@ -4,54 +4,77 @@
 """
 
 from os.path import split
+from flask import request, Flask, render_template, url_for
+from forms import DrugQueryForm
 import pandas as pd
-import datetime
+import csv
+import matplotlib.pyplot as plt
 
-pd.set_option('display.width', 200)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'f9f090e11ddd2bae'
+import pymongo
+from pymongo import MongoClient
+client = MongoClient()
 
 
-def clean_data(data):
-    """ clean data
-    """
-    # Remove columns starts with vote
-    cols = [x for x in data.columns if x.find('vote') >= 0]
-    data.drop(cols, axis=1, inplace=True)
-    # Remove special characteres from columns
-    data.loc[:, 'civility'] = data['civility'].replace('\.', '', regex=True)
-    # Calculate Age from day of birth
-    actual_year = datetime.datetime.now().year
-    data.loc[:, 'Year_Month'] = pd.to_datetime(data.birthdate)
-    data.loc[:, 'Age'] = actual_year - data['Year_Month'].dt.year
-    # Uppercase variable to avoid duplicates
-    data.loc[:, 'city'] = data['city'].str.upper()
-    # Take 2 first digits, 2700 -> 02700 so first two are region
-    data.loc[:, 'postal_code'] = data.postal_code.str.zfill(5).str[0:2]
-    # Remove columns with more than 50% of nans
-    cnans = data.shape[0] / 2
-    data = data.dropna(thresh=cnans, axis=1)
-    # Remove rows with more than 50% of nans
-    rnans = data.shape[1] / 2
-    data = data.dropna(thresh=rnans, axis=0)
-    # Discretize based on quantiles
-    data.loc[:, 'duration'] = pd.qcut(data['surveyduration'], 10)
-    # Discretize based on values
-    data.loc[:, 'Age'] = pd.cut(data['Age'], 10)
-    # Rename columns
-    data.rename(columns={'q1': 'Frequency'}, inplace=True)
-    # Transform type of columns
-    data.loc[:, 'Frequency'] = data['Frequency'].astype(int)
-    # Rename values in rows
-    drows = {1: 'Manytimes', 2: 'Onetimebyday', 3: '5/6timesforweek',
-             4: '4timesforweek', 5: '1/3timesforweek', 6: '1timeformonth',
-             7: '1/trimestre', 8: 'Less', 9: 'Never'}
-    data.loc[:, 'Frequency'] = data['Frequency'].map(drows)
-    return data
+
+db = client['adverse_effects']
+
+df = pd.read_csv('./data/categorical_se.csv')
+drugs = db['drugs']
+db.drugs.drop()
+drugs.insert_many(df.T.to_dict().values())
+
+
+
+
+@app.route('/', methods = ['GET', 'POST'])
+@app.route('/home', methods = ['GET', 'POST'])
+def home():
+    #Query the database
+    form = DrugQueryForm()
+    to_display = drugs.find_one({'drugName' : f'{form.drugname.data}'})
+    if to_display == None: #Default if no entry yet
+        to_display = drugs.find_one({'drugName' : 'Abatacept'})
+
+    #Remove zero value counts
+    panda = pd.DataFrame(to_display, index = ['drug'])
+    panda = panda.drop(columns = ['_id'])
+    panda = panda.loc[:, (panda != 0).any(axis=0)]
+
+    #Reset to dictionary for plotting
+    fig, ax = plt.subplots()
+    row = {}
+    for column in panda.columns:
+        row[f'{column}'] = panda.loc[panda.index[0],f'{column}']
+
+    #Seperate pairs to be plotted
+    group_data = list(row.values())[1:]
+    group_names = list(row.keys())[1:]
+
+    ax.barh(group_names, group_data)
+    # ax = panda.plot.barh()
+    ax.set_xlabel('Total Number')
+    ax.set_title('Reported Side Effects')
+    plt.style.use('seaborn')
+    if to_display == drugs.find_one({'drugName' : 'Abatacept'}):
+        fig.savefig(f'./static/images/Abatacept.png')
+        image = './static/images/Abatacept.png'
+    else:
+        fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
+        image = f'./static/images/{form.drugname.data.replace(" ", "")}.png'
+    #Create table to go above image
+    panda = panda.to_html(index = False)
+
+
+
+    return render_template('home.html', html_block=panda, form=form, image=image)
+
+@app.route('/about')
+def data():
+    return render_template('data.html')
+
 
 
 if __name__ == '__main__':
-    # For introspections purpose to quickly get this functions on ipython
-    import adverse_drug_reactions
-    folder_source, _ = split(adverse_drug_reactions.__file__)
-    df = pd.read_csv('{}/data/data.csv.gz'.format(folder_source))
-    clean_data = clean_data(df)
-    print(' dataframe cleaned')
+    app.run(debug=True)

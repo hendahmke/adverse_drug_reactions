@@ -13,4 +13,3 @@ groupama/data/base_pno.*
 /raw_data/
 .env
 *.db
-static/
