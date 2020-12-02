@@ -11,18 +11,20 @@ app.config['SECRET_KEY'] = 'f9f090e11ddd2bae'
 
 
 
-
+drug_list = pickle.load(open("./list_of_drugs.pkl", "rb"))
 master_dict = pickle.load(open("./master_dict.pkl", 'rb'))
+print(drug_list[1])
 
-#This is an empty commit
-
+@app.route('/_autocomplete', methods=['GET'])
+def autocomplete():
+    return Response(json.dumps(drug_list), mimetype='application/json')
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
     #Query the database
-    form = DrugQueryForm()
-    if form.drugname.data == None: #Default if no entry yet
+    form = DrugQueryForm(request.form)
+    if form.drugname.data == '': #Default if no entry yet
         to_display = master_dict['Abatacept']
     else:
         to_display = master_dict[f'{form.drugname.data}']

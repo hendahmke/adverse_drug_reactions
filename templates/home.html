@@ -3,17 +3,19 @@
 
   <h1>Self-Reported Adverse Drug Effects</h1>
   <div class="selector">
-    <h2>Please select the drug you're looking for.</h2>
-    <p>This will be either a pull down or type in box for possible drugs</p>
+    <h2>Please type the drug you're looking for.</h2>
   </div>
   <div class = "content-section">
     <form method="POST" action="">
       {{ form.hidden_tag() }}
       <fieldset class = "form-group">
         <legend class = "border-bottom mb-4">Type in drug to search</legend>
+        <div class="example" id="the-basics">
         <div class="form-group">
+<!--         <input class="form-control basicAutoComplete" type="text" data-url="/static/drug_list.json" autocomplete="off">-->
             {{ form.drugname.label(class="form-control-label") }}
-            {{ form.drugname(class="form-control form-control-lg") }}
+            {{ form.drugname(class="form-control form-control-lg typeahead") }}
+        </div>
         </div>
       </fieldset>
       <div class="form-group">
