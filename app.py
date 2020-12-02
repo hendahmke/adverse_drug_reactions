@@ -13,7 +13,6 @@ app.config['SECRET_KEY'] = 'f9f090e11ddd2bae'
 
 drug_list = pickle.load(open("./list_of_drugs.pkl", "rb"))
 master_dict = pickle.load(open("./master_dict.pkl", 'rb'))
-print(drug_list[1])
 
 @app.route('/_autocomplete', methods=['GET'])
 def autocomplete():
