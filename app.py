@@ -47,7 +47,7 @@ def home():
     ax.barh(group_names, group_data)
     # ax = panda.plot.barh()
     ax.set_xlabel('Total Number')
-    ax.set_title('Reported Side Effects')
+    ax.set_title('Percentage of Reviews')
     plt.style.use('seaborn')
     plt.tight_layout()
     if to_display == master_dict['Etonogestrel']:
