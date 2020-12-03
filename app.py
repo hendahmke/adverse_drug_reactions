@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = 'f9f090e11ddd2bae'
 
 
 drug_list = pickle.load(open("./list_of_drugs.pkl", "rb"))
-master_dict = pickle.load(open("./master_dict.pkl", 'rb'))
+master_dict = pickle.load(open("./master_dict_perc.pkl", 'rb'))
 
 @app.route('/_autocomplete', methods=['GET'])
 def autocomplete():
@@ -40,8 +40,8 @@ def home():
         row[f'{column}'] = panda.loc[panda.index[0],f'{column}']
 
     #Seperate pairs to be plotted
-    group_data = list(row.values())[1:]
-    group_names = list(row.keys())[1:]
+    group_data = list(row.values())[1:-1]
+    group_names = list(row.keys())[1:-1]
 
     ax.barh(group_names, group_data)
     # ax = panda.plot.barh()
