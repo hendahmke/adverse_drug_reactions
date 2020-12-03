@@ -13,6 +13,10 @@
  -->
 <!--     <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
  -->
+    <style>
+    .form-control:focus{border-color: #5bc0de;  border-width: 2px; box-shadow: none; -webkit-box-shadow: none;}
+    .has-error .form-control:focus{box-shadow: none; -webkit-box-shadow: none;}
+    </style>
     <title>Adverse Drug Effects</title>
   </head>
   <body>
@@ -33,7 +37,7 @@
     </header>
     <main role="main" class="container">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-auto">
           {% block content %}{% endblock %}
         </div>
       </div>

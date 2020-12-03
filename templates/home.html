@@ -23,9 +23,10 @@
         {{ form.submit(class="btn btn-outline-info") }}
       </div>
     </form>
+    {% print(html_block) | safe %}
+    <br>
+    <img src={{ image }} alt="Chart">
   </div>
-  {% print(html_block) | safe %}
-  <br>
-  <img src={{ image }} alt="Chart" height="750" width="750">
+
 {% endblock %}
 
