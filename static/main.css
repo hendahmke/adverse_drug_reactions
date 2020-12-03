@@ -9,9 +9,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 image {
-  max-height: 80%;
-  max-width: 80%;
+  max-height: auto;
+  max-width: auto;
   display: block;
+  padding: 10px 20px;
 }
 
 .bg-steel {
