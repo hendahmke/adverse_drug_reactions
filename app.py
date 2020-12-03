@@ -21,7 +21,7 @@ def autocomplete():
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
-    #Query the database
+    #Query the master_dict
     form = DrugQueryForm(request.form)
     if form.drugname.data == '': #Default if no entry yet
         to_display = master_dict['Abatacept']
