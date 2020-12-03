@@ -32,6 +32,7 @@ def home():
     panda = pd.DataFrame(to_display, index = ['drug'])
     panda = panda.drop(columns = ['_id'])
     panda = panda.loc[:, (panda != 0).any(axis=0)]
+    panda = panda.rename(columns = {'drugName' : 'drug'})
 
     #Reset to dictionary for plotting
     fig, ax = plt.subplots()
