@@ -49,6 +49,7 @@ def home():
     ax.set_xlabel('Total Number')
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
+    plt.tight_layout()
     if to_display == master_dict['Etonogestrel']:
         fig.savefig('./static/images/Etonogestrel.png')
         image = './static/images/Etonogestrel.png'
