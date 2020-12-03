@@ -1,10 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h2>Disclaimer:</h2>
-  <br>
-  <p>This tool does not provide medical advice. It is the result of four students playing with a dataset and intended for informational purposes only. Do not use it as a substitute for professional medical advice, diagnosis or treatment! </p>
-  <p>You understand and acknowledge that you should always seek the advice of your physician or other qualified health provider with any questions or concerns you may have regarding your medication.</p>
-  <br>
-  <p>Data collected from https://www.kaggle.com/jessicali9530/kuc-hackathon-winter-2018</p>
+  <div class = "content-section">
+    <h2>Disclaimer:</h2>
+    <br>
+    <p>This tool does not provide medical advice. It is the result of four students playing with a dataset and intended for informational purposes only. Do not use it as a substitute for professional medical advice, diagnosis or treatment! </p>
+    <p>You understand and acknowledge that you should always seek the advice of your physician or other qualified health provider with any questions or concerns you may have regarding your medication.</p>
+  </div>
+  <div class = "content-section">
+    <p>Data collected from this <a href='https://www.kaggle.com/jessicali9530/kuc-hackathon-winter-2018'>Kaggle</a> set.</p>
+    <br>
+    <p>Common words from these reviews can be seen below. Clearly, side effects are a large part of review content.</p>
+    <br>
+    <img src="./static/images/wordcloud.png" alt="Chart">
+  </div>
 {% endblock %}
 
