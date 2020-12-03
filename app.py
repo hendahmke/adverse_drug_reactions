@@ -24,7 +24,7 @@ def home():
     #Query the master_dict
     form = DrugQueryForm(request.form)
     if form.drugname.data == '': #Default if no entry yet
-        to_display = master_dict['Abatacept']
+        to_display = master_dict['Etonogestrel']
     else:
         to_display = master_dict[f'{form.drugname.data}']
 
@@ -49,9 +49,9 @@ def home():
     ax.set_xlabel('Total Number')
     ax.set_title('Reported Side Effects')
     plt.style.use('seaborn')
-    if to_display == master_dict['Abatacept']:
-        fig.savefig('./static/images/Abatacept.png')
-        image = './static/images/Abatacept.png'
+    if to_display == master_dict['Etonogestrel']:
+        fig.savefig('./static/images/Etonogestrel.png')
+        image = './static/images/Etonogestrel.png'
     else:
         fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
         image = f'./static/images/{form.drugname.data.replace(" ", "")}.png'
