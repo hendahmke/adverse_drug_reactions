@@ -14,7 +14,7 @@
         <div class="example" id="the-basics">
         <div class="form-group">
             {{ form.drugname.label(class="form-control-label") }}
-            {{ form.drugname(class="form-control form-control-lg typeahead tt-menu", placeholder="Ex: Etonogestrel") }}
+            {{ form.drugname(class="form-control form-control-lg typeahead tt-menu", placeholder="Ex: Etonogestrel", style="top: -1px;left: -1px;") }}
         </div>
         </div>
       </fieldset>
@@ -25,7 +25,9 @@
   </div>
   <div class = "content-section">
     <legend class = "border-bottom mb-4">Percentage of side effect mentions in total reviews.</legend>
+    <div class = "table-style">
     {% print(html_block) | safe %}
+    </div>
     <br>
     <img src={{ image }} alt="Chart">
   </div>
