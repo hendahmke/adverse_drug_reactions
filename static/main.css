@@ -10,7 +10,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
   word-wrap: break-word;
-  max-width: 50vw;
+  max-width: 80%;
 }
 
 image {
@@ -42,7 +42,7 @@ image {
   border: 1px solid #dddddd;
   border-radius: 3px;
   margin-bottom: 20px;
-  max-width: 90vw;
+  max-width: 90vw !important;
 }
 
 .article-title {
