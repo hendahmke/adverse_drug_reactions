@@ -91,10 +91,20 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+    .table-style {
+                  width: 80%;
+}
+
+    .table-style td {
+                  width: 100px;
+}
+
 .tt-menu {
   width: 252px;
   margin: 8px 0;
   padding: 12px 0;
+  padding-left: 8px !important;
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -104,4 +114,19 @@ a.article-title:hover {
   -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  padding-left: 8px !important;
+}
+
+.tt-hint {
+  width: 396px;
+  height: 30px;
+  padding: 8px 12px;
+  font-size: 24px;
+  line-height: 30px;
+  padding-left: 2px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  outline: none;
 }
