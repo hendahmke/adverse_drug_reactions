@@ -34,7 +34,7 @@ def home():
     panda = pd.DataFrame(to_display, index = ['drug'])
     panda = panda.drop(columns = ['_id'])
     panda = panda.loc[:, (panda != 0).any(axis=0)]
-    panda = panda.rename(columns = {'drugName' : 'drug'})
+    panda = panda.rename(columns = {'drugName' : 'Drug'})
 
     #Reset to dictionary for plotting
     fig, ax = plt.subplots()
@@ -48,7 +48,7 @@ def home():
 
     ax.barh(group_names, group_data)
     # ax = panda.plot.barh()
-    ax.set_xlabel('Total Number')
+    ax.set_xlabel('Percent Containing')
     ax.set_title('Percentage of Reviews')
     plt.style.use('seaborn')
     plt.tight_layout()
