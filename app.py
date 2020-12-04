@@ -25,8 +25,10 @@ def home():
     form = DrugQueryForm(request.form)
     if form.drugname.data == '': #Default if no entry yet
         to_display = master_dict['Etonogestrel']
-    else:
+    elif form.drugname.data in drug_list:
         to_display = master_dict[f'{form.drugname.data}']
+    else:
+        return render_template('home.html', html_block="Please enter a drug from our database.", form=form, image="./static/images/Blank.png")
 
     #Remove zero value counts
     panda = pd.DataFrame(to_display, index = ['drug'])
