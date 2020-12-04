@@ -53,8 +53,8 @@ def home():
     plt.style.use('seaborn')
     plt.tight_layout()
     if to_display == master_dict['Etonogestrel']:
-        fig.savefig('./static/images/Etonogestrel.png')
-        image = './static/images/Etonogestrel.png'
+        fig.savefig('./static/images/Etonogestrel2.png')
+        image = './static/images/Etonogestrel2.png'
     else:
         fig.savefig(f'./static/images/{form.drugname.data.replace(" ", "")}.png')
         image = f'./static/images/{form.drugname.data.replace(" ", "")}.png'
