@@ -1,70 +1,35 @@
-# Data analysis
-- Document here the project: adverse_drug_reactions
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+# Detecting side effects in prescription drug reviews
 
-Please document the project the better you can.
+## Description
+- In this project, a team of data scientist created a web application to search for underreported side-effects for prescription drugs. You can find out app here:
 
-# Stratup the project
+    https://sideeffects.herokuapp.com
+ 
+ - NOTE: DO NOT USE THIS AS A DIAGNOSIS TOOL. ONLY CONSULT YOUR PHYSICIAN!
+ 
 
-The initial setup.
+## Preprocessing
 
-Create virtualenv and install the project:
-```bash
-  $ sudo apt-get install virtualenv python-pip python-dev
-  $ deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
-    pip install pip -U; pip install -r requirements.txt
-```
+We analysed over 200,000 drug reviews. As this was unlabeled data, we used several NLP preprocessing algorithms to both generate lists of "spoken language" symptoms, i.e. how people actually describe side effects in spontaneous reports, as well as to how detect side effects based on word similiarties. We did this using
 
-Unittest test:
-```bash
-  $ make clean install test
-```
+- BERT to generate a list of side effects from the Google Gigaword corpus (GLOVE) 
+- Word2Vec to detect word clusters within our own set of reviews
 
-Check for adverse_drug_reactions in gitlab.com/{group}.
-If your project is not set please add it:
+## Unsupervised learning
 
-- Create a new project on `gitlab.com/{group}/adverse_drug_reactions`
-- Then populate it:
+LDA models were used to generate topics and then the reviews were vectorized based on our list side effects (along with various controls) 
 
-```bash
-  $ ##   e.g. if group is "{group}" and project_name is "adverse_drug_reactions"
-  $ git remote add origin git@gitlab.com:{group}/adverse_drug_reactions.git
-  $ git push -u origin master
-  $ git push -u origin --tags
-```
+## Packaging and deployment
 
-Functionnal test with a script:
-```bash
-  $ cd /tmp
-  $ adverse_drug_reactions-run
-```
-# Install
-Go to `gitlab.com/{group}/adverse_drug_reactions` to see the project, manage issues,
-setup you ssh public key, ...
+The front end was developed using Flask in order to continious integrate our python based backend. 
 
-Create a python3 virtualenv and activate it:
-```bash
-  $ sudo apt-get install virtualenv python-pip python-dev
-  $ deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
-```
+https://sideeffects.herokuapp.com
 
-Clone the project and install it:
-```bash
-  $ git clone gitlab.com/{group}/adverse_drug_reactions
-  $ cd adverse_drug_reactions
-  $ pip install -r requirements.txt
-  $ make clean install test                # install and test
-```
-Functionnal test with a script:
-```bash
-  $ cd /tmp
-  $ adverse_drug_reactions-run
-``` 
+The app is CI enabled for future development. 
 
-# Continus integration
-## Github 
-Every push of `master` branch will execute `.github/workflows/pythonpackages.yml` docker jobs.
-## Gitlab
-Every push of `master` branch will execute `.gitlab-ci.yml` docker jobs.
+
+
+
+
+
+
